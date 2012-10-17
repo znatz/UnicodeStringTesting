@@ -53,7 +53,6 @@ Report(999, Within(str,"123","123"));
 Report(EPos(str,"1234"),"1234 has end pos in ");
 }
 
-// Return the position for the Nth str in body. Body: str str str str ...
 int Search(UnicodeString body, UnicodeString part,int index)
 {
 	UnicodeString bodyCopy = body;
@@ -74,7 +73,6 @@ int Search(UnicodeString body, UnicodeString part,int index)
 	return position - 1;
 }
 
-// Return the count duplicated str in body.
 int CountPart(UnicodeString body,UnicodeString part)
 {
 	int count=0;
@@ -87,7 +85,6 @@ int CountPart(UnicodeString body,UnicodeString part)
 	return count;
 }
 
-// Return the str with in head and tail. Body: headstrtail
 UnicodeString Within(UnicodeString body,UnicodeString head, UnicodeString tail)
 {
 	if (head!=tail)
@@ -104,7 +101,6 @@ UnicodeString Within(UnicodeString body,UnicodeString head, UnicodeString tail)
 	}
 }
 
-// Return the position of the ending char of part in body.
 int EPos(UnicodeString body, UnicodeString part)
 {
 	return body.Pos(part)+ part.Length()-1;

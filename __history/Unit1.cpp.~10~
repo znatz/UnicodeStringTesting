@@ -49,11 +49,10 @@ str = "12345678901234567890123456789012345678901234567890";
 Report(Search(str,"123",4), "The forth 123 is ");
 Report(999, str); // the orginal string is not changed
 Report(CountPart(str,"123"), "123 appears times of ");
-Report(999, Within(str,"123","123"));
+Report(999, Within(str,"123","789"));
 Report(EPos(str,"1234"),"1234 has end pos in ");
 }
 
-// Return the position for the Nth str in body. Body: str str str str ...
 int Search(UnicodeString body, UnicodeString part,int index)
 {
 	UnicodeString bodyCopy = body;
@@ -74,7 +73,6 @@ int Search(UnicodeString body, UnicodeString part,int index)
 	return position - 1;
 }
 
-// Return the count duplicated str in body.
 int CountPart(UnicodeString body,UnicodeString part)
 {
 	int count=0;
@@ -87,24 +85,12 @@ int CountPart(UnicodeString body,UnicodeString part)
 	return count;
 }
 
-// Return the str with in head and tail. Body: headstrtail
+// head must NOT equal tail
 UnicodeString Within(UnicodeString body,UnicodeString head, UnicodeString tail)
 {
-	if (head!=tail)
-	{
-		return body.SubString(body.Pos(head)+head.Length()-1, body.Pos(tail)-body.Pos(head)-head.Length());
-	}
-	else if (head==tail)
-	{
-		UnicodeString temp = body;
-		temp.Delete(1,temp.Pos(head)-1);
-		temp.Delete(1,head.Length());
-		temp.Delete(temp.Pos(tail),temp.Length()-temp.Pos(tail)+1);
-		return temp;
-	}
+	return body.SubString(body.Pos(head)+head.Length()-1, body.Pos(tail)-body.Pos(head)-head.Length());
 }
 
-// Return the position of the ending char of part in body.
 int EPos(UnicodeString body, UnicodeString part)
 {
 	return body.Pos(part)+ part.Length()-1;
