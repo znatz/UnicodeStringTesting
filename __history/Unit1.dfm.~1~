@@ -21,7 +21,6 @@ object Form1: TForm1
     ImeName = 'Google Japanese Input'
     Lines.Strings = (
       'Memo1')
-    ScrollBars = ssBoth
     TabOrder = 0
   end
   object Button1: TButton

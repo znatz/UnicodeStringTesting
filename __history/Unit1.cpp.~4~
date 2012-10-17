@@ -37,34 +37,34 @@ str = str.SetLength(12);
 Report(999, "After set length=12 the length of "+ str + " is " + str.Length());
 
 /*                                                                              */
-
-    str = "12345678901234567890     ";
-	Report(Search(str,"123",2), "The second 123 is ");
-
-str = "12345678901234567890123456789012345678901234567890";
-Report(Search(str,"123",4), "The forth 123 is ");
+UnicodeString str = "12345678901234567890     ";
 
 }
 
-int Search(UnicodeString body, UnicodeString part,int index)
+int Search(UnicodeString body, UnicodeString parts,int index)
 {
+	int position 		   = 0;
 	UnicodeString bodyCopy = body;
-	int position 		   = body.Pos(part);
-	int partL 			   = part.Length();
-	int posCopy			   = position;
-	int count			   = 0;
-	while(count!= index-1)
+	int partL 			   = parts.Length();
+	if (body.Pos(parts)!=0)
 	{
-		count++;
-		if (posCopy!=0) {
-			bodyCopy.Delete(posCopy,partL);
-			position+=partL;
-			posCopy = bodyCopy.Pos(part);
-		}
+
 	}
-	position += bodyCopy.Pos(part);
-	return position - 1;
+	return position;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
