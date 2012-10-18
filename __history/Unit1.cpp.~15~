@@ -15,7 +15,6 @@ int EPos(UnicodeString , UnicodeString )  ;
 UnicodeString AfterTail(UnicodeString, UnicodeString);
 UnicodeString WithinTails(UnicodeString,UnicodeString, UnicodeString, int);
 UnicodeString RemoveHead(UnicodeString,UnicodeString);
-UnicodeString AfterNTail(UnicodeString, UnicodeString, int);
 
 TForm1 *Form1;
 //---------------------------------------------------------------------------
@@ -47,27 +46,26 @@ Report(999, "After set length=12 the length of "+ str + " is " + str.Length());
 
 /*                                                                              */
 
+    str = "12345678901234567890     ";
+	Report(Search(str,"123",2), "The second 123 is ");
 
-
-
-str = "123<>4567890123456789012345<678>9012345678901234567890";
+str = "<123>45678901234567890123456789012345678901234567890";
 //Report(Search(str,"123",4), "The forth 123 is ");
 //Report(999, str); // the orginal string is not changed
 //Report(CountPart(str,"123"), "123 appears times of ");
-//Report(999, Within(str,"90","90"));
-//Report(999, "before > "+ RemoveHead(str,">"));
+Report(999, Within(str,"90","90"));
+Report(999, "before 4 "+ RemoveHead(str,"4"));
 //Report(EPos(str,"1234"),"1234 has end pos in ");
 //Report(999, "After 5 is "+AfterTail(str,"5"));
-//Report(999, WithinTails(str,"<",">",2));
-Report(Search(str,"123",2), "The second 123 is ");
-//Report(999, "After 5 is "+ AfterNTail(str,"5",5));
+//Report(999, WithinTails(str,"123","123",4));
+
 }
 
 // Return the position for the Nth str in body. Body: str str str str ...
 int Search(UnicodeString body, UnicodeString part,int index)
 {
 	UnicodeString bodyCopy = body;
-	int position 		   = 1;//body.Pos(part);
+	int position 		   = body.Pos(part);
 	int partL 			   = part.Length();
 	int posCopy			   = position;
 	int count			   = 0;
@@ -77,7 +75,6 @@ int Search(UnicodeString body, UnicodeString part,int index)
 		if (posCopy!=0) {
 			bodyCopy.Delete(posCopy,partL);
 			position+=partL;
-			//position--;
 			posCopy = bodyCopy.Pos(part);
 		}
 	}
@@ -124,7 +121,7 @@ int EPos(UnicodeString body, UnicodeString part)
 // Return str after the tail.
 UnicodeString AfterTail(UnicodeString body, UnicodeString tail)
 {
-	return body.SubString(EPos(body,tail)+ 1,body.Length()-EPos(body,tail));
+	return body.SubString(EPos(body,tail)+1,body.Length()-EPos(body,tail)-1);
 }
 
 // Return str after head and before the Nth tail.
@@ -152,19 +149,6 @@ UnicodeString RemoveHead(UnicodeString body,UnicodeString head)
 	UnicodeString temp = body;
 	return temp.Delete(1, temp.Pos(head)-1);
 }
-
-// Remove chars after the Nth tail.
-UnicodeString AfterNTail(UnicodeString body, UnicodeString tail, int index)
-{
-	UnicodeString temp = body;
-	while(index>=0)
-	{
-		temp = AfterTail(temp,tail);
-		index--;
-	}
-	return temp;
-}
-
 //---------------------------------------------------------------------------
 
 void Report(int v,UnicodeString s)
