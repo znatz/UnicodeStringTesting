@@ -12,6 +12,13 @@ int Search(UnicodeString, UnicodeString,int);
 int CountPart(UnicodeString,UnicodeString)  ;
 UnicodeString Within(UnicodeString ,UnicodeString , UnicodeString )  ;
 int EPos(UnicodeString , UnicodeString )  ;
+UnicodeString AfterTail(UnicodeString, UnicodeString);
+UnicodeString WithinTails(UnicodeString,UnicodeString, UnicodeString, int);
+UnicodeString RemoveHead(UnicodeString,UnicodeString);
+UnicodeString AfterNTail(UnicodeString, UnicodeString, int);
+void testP(int);
+void testPP(int*);
+
 TForm1 *Form1;
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
@@ -19,6 +26,8 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 {
 	Form1->Memo1->Text="";
 }
+
+void testP(int p){p=100;}
 //---------------------------------------------------------------------------
 void __fastcall TForm1::Button1Click(TObject *Sender)
 {
@@ -42,21 +51,36 @@ Report(999, "After set length=12 the length of "+ str + " is " + str.Length());
 
 /*                                                                              */
 
-    str = "12345678901234567890     ";
-	Report(Search(str,"123",2), "The second 123 is ");
 
-str = "12345678901234567890123456789012345678901234567890";
-Report(Search(str,"123",4), "The forth 123 is ");
-Report(999, str); // the orginal string is not changed
-Report(CountPart(str,"123"), "123 appears times of ");
-Report(999, Within(str,"123","123"));
-Report(EPos(str,"1234"),"1234 has end pos in ");
+
+
+str = "123<>4567890123456789012345<678>9012345678901234567890";
+//Report(Search(str,"123",4), "The forth 123 is ");
+//Report(999, str); // the orginal string is not changed
+//Report(CountPart(str,"123"), "123 appears times of ");
+//Report(999, Within(str,"90","90"));
+//Report(999, "before > "+ RemoveHead(str,">"));
+//Report(EPos(str,"1234"),"1234 has end pos in ");
+//Report(999, "After 5 is "+AfterTail(str,"5"));
+//Report(999, WithinTails(str,"<",">",2));
+Report(Search(str,"123",2), "The second 123 is ");
+//Report(999, "After 5 is "+ AfterNTail(str,"5",5));
+int k;
+k=7;
+testP(k);
+Report(k,"k is 7 and now k is ");
+int* p;
+
+k= *p; // k gets what is pointed to by p.
+//testP(p);
+Report(k,"k is 0 and now p is ");
 }
 
+// Return the position for the Nth str in body. Body: str str str str ...
 int Search(UnicodeString body, UnicodeString part,int index)
 {
 	UnicodeString bodyCopy = body;
-	int position 		   = body.Pos(part);
+	int position 		   = 1;//body.Pos(part);
 	int partL 			   = part.Length();
 	int posCopy			   = position;
 	int count			   = 0;
@@ -66,6 +90,7 @@ int Search(UnicodeString body, UnicodeString part,int index)
 		if (posCopy!=0) {
 			bodyCopy.Delete(posCopy,partL);
 			position+=partL;
+			//position--;
 			posCopy = bodyCopy.Pos(part);
 		}
 	}
@@ -73,6 +98,7 @@ int Search(UnicodeString body, UnicodeString part,int index)
 	return position - 1;
 }
 
+// Return the count duplicated str in body.
 int CountPart(UnicodeString body,UnicodeString part)
 {
 	int count=0;
@@ -85,11 +111,12 @@ int CountPart(UnicodeString body,UnicodeString part)
 	return count;
 }
 
+// Return the str with in head and tail. Body: headstrtail
 UnicodeString Within(UnicodeString body,UnicodeString head, UnicodeString tail)
 {
 	if (head!=tail)
 	{
-		return body.SubString(body.Pos(head)+head.Length()-1, body.Pos(tail)-body.Pos(head)-head.Length());
+		return body.SubString(body.Pos(head)+head.Length(), body.Pos(tail)-body.Pos(head)-head.Length());
 	}
 	else if (head==tail)
 	{
@@ -101,11 +128,72 @@ UnicodeString Within(UnicodeString body,UnicodeString head, UnicodeString tail)
 	}
 }
 
+// Return the position of the ending char of part in body.
 int EPos(UnicodeString body, UnicodeString part)
 {
 	return body.Pos(part)+ part.Length()-1;
 }
 
+// Return str after the tail.
+UnicodeString AfterTail(UnicodeString body, UnicodeString tail)
+{
+	return body.SubString(EPos(body,tail)+ 1,body.Length()-EPos(body,tail));
+}
+
+// Return str after head and before the Nth tail.
+UnicodeString WithinTails(UnicodeString body,UnicodeString head, UnicodeString tail, int tailIndex)
+{
+	int count= 0;
+	UnicodeString temp = body;
+	if (CountPart(body,tail)==0)
+	{
+		return body;
+	}
+	else if (CountPart(body,tail)==1)
+	{
+		return Within(body,head,tail);
+	 }
+	 else if (CountPart(body, tail)>1)
+	 {
+		return body.SubString(body.Pos(head)+head.Length(), Search(body,tail,tailIndex)-body.Pos(head)-head.Length() );
+	  }
+}
+
+// Remove char before string
+UnicodeString RemoveHead(UnicodeString body,UnicodeString head)
+{
+	UnicodeString temp = body;
+	return temp.Delete(1, temp.Pos(head)-1);
+}
+
+// Remove chars after the Nth tail.
+UnicodeString AfterNTail(UnicodeString body, UnicodeString tail, int index)
+{
+	UnicodeString temp = body;
+	while(index>=0)
+	{
+		temp = AfterTail(temp,tail);
+		index--;
+	}
+	return temp;
+}
+
+// Divide a string into two parts.
+UnicodeString * DivStr(UnicodeString WholeStr, UnicodeString Archor)
+{
+	int CutPos;
+	int StrLength;
+	UnicodeString *sArray;
+
+	sArray 	  = new UnicodeString[2];
+	CutPos 	  = WholeStr.Pos(Archor);
+	StrLength = WholeStr.Length();
+
+	sArray[0] = WholeStr.SubString(1,CutPos-1);
+	sArray[1] = WholeStr.SubString(CutPos + 1, StrLength - CutPos);
+
+	return sArray;
+}
 
 //---------------------------------------------------------------------------
 

@@ -16,6 +16,9 @@ UnicodeString AfterTail(UnicodeString, UnicodeString);
 UnicodeString WithinTails(UnicodeString,UnicodeString, UnicodeString, int);
 UnicodeString RemoveHead(UnicodeString,UnicodeString);
 UnicodeString AfterNTail(UnicodeString, UnicodeString, int);
+UnicodeString * DivStr(UnicodeString WholeStr, UnicodeString Archor);
+void testP(int);
+void testPP(int*);
 
 TForm1 *Form1;
 //---------------------------------------------------------------------------
@@ -24,43 +27,15 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 {
 	Form1->Memo1->Text="";
 }
+
+void testP(int p){p=100;}
 //---------------------------------------------------------------------------
 void __fastcall TForm1::Button1Click(TObject *Sender)
 {
-UnicodeString str = "12345678901234567890     ";
-Report(999, "123 inside " + str+ " located at " + str.Pos("123"));
-// CAREFUL: the result is 13 not 10
-Report(999, "123 inside search from right" + str+ " located at " + str.LastDelimiter("123"));
-// CAREFUL: str.Delete is performed before passing to the report, so str is changed before passing.
-Report(999, "Delete 123 from " + str+ " result is " + str.Delete(1,3) );
-// CAREFUL: The followings are the same.
-Report(999, "Substring from 0 with length 4 is of " + str+ " is " + str.SubString(0,4));
-Report(999, "Substring from 1 with length 4 is of " + str+ " is " + str.SubString(1,4));
-Report(999, "The 5th character in  " + str+ " is " + str[5]);
-// CAREFUL: Trimming and SetLength does NOT modify the original string, you have to set it yourself
-Report(999, "Before trimming the length of "+ str + " is " + str.Length());
-str = str.Trim();
-Report(999, "After trimming the length of "+ str + " is " + str.Length());
-str = str.SetLength(12);
-Report(999, "After set length=12 the length of "+ str + " is " + str.Length());
-
-
-/*                                                                              */
-
-
-
-
-str = "123<>4567890123456789012345<678>9012345678901234567890";
-//Report(Search(str,"123",4), "The forth 123 is ");
-//Report(999, str); // the orginal string is not changed
-//Report(CountPart(str,"123"), "123 appears times of ");
-//Report(999, Within(str,"90","90"));
-//Report(999, "before > "+ RemoveHead(str,">"));
-//Report(EPos(str,"1234"),"1234 has end pos in ");
-//Report(999, "After 5 is "+AfterTail(str,"5"));
-//Report(999, WithinTails(str,"<",">",2));
-Report(Search(str,"123",2), "The second 123 is ");
-//Report(999, "After 5 is "+ AfterNTail(str,"5",5));
+	UnicodeString *str;
+	str	= DivStr("<abcdefghijklmn>" , "f");
+	Report(0, str[0]);
+	Report(0, str[1]);
 }
 
 // Return the position for the Nth str in body. Body: str str str str ...
@@ -163,6 +138,23 @@ UnicodeString AfterNTail(UnicodeString body, UnicodeString tail, int index)
 		index--;
 	}
 	return temp;
+}
+
+// Divide a string into two parts.
+UnicodeString * DivStr(UnicodeString WholeStr, UnicodeString Archor)
+{
+	int CutPos;
+	int StrLength;
+	UnicodeString *sArray;
+
+	sArray 	  = new UnicodeString[2];
+	CutPos 	  = WholeStr.Pos(Archor);
+	StrLength = WholeStr.Length();
+
+	sArray[0] = WholeStr.SubString(1,CutPos-1);
+	sArray[1] = WholeStr.SubString(CutPos + 1, StrLength - CutPos);
+
+	return sArray;
 }
 
 //---------------------------------------------------------------------------
